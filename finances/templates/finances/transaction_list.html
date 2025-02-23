@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">📌 Список транзакцій</h2>
+
+    <!-- Форма пошуку -->
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <input type="text" name="search" class="form-control" placeholder="🔍 Пошук за назвою таблиці"
+                   value="{{ request.GET.search|default_if_none:'' }}">
+        </div>
+        <div class="col-md-2">
+            <input type="number" step="0.01" name="min_amount" class="form-control" placeholder="Мін. сума"
+                   value="{{ request.GET.min_amount|default_if_none:'' }}">
+        </div>
+        <div class="col-md-2">
+            <input type="number" step="0.01" name="max_amount" class="form-control" placeholder="Макс. сума"
+                   value="{{ request.GET.max_amount|default_if_none:'' }}">
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="start_date" class="form-control" value="{{ request.GET.start_date|default_if_none:'' }}">
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="end_date" class="form-control" value="{{ request.GET.end_date|default_if_none:'' }}">
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary">Фільтрувати</button>
+        </div>
+        <div class="col-md-1">
+            <a href="?" class="btn btn-outline-secondary">Скинути</a>
+        </div>
+    </form>
+
+    <hr>
+
+    <!-- Відображення загальних витрат у всіх валютах -->
+    <div class="alert alert-info">
+        <h4>📊 Загальні витрати:</h4>
+        <ul class="list-unstyled">
+            {% for currency, amount in total_amounts.items %}
+                <li><strong>{{ amount|floatformat:2 }} {{ currency }}</strong></li>
+            {% endfor %}
+        </ul>
+        <p><strong>💰 Всього у UAH:</strong> {{ total_uah|floatformat:2 }} UAH</p>
+    </div>
+
+    <hr>
+
+    <!-- Таблиця транзакцій -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Сума</th>
+                    <th>Валюта</th>
+                    <th>Дата</th>
+                    <th>Таблиця</th>
+                    <th>Категорії</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.currency }}</td>
+                    <td>{{ transaction.date }}</td>
+                    <td>{{ transaction.table.name }}</td>
+                    <td>
+                        {% for category in transaction.categories.all %}
+                            <span class="badge bg-info">{{ category.name }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <a href="{% url 'transaction_update' transaction.id %}" class="btn btn-warning btn-sm">✏️ Редагувати</a>
+                        <a href="{% url 'transaction_delete' transaction.id %}" class="btn btn-danger btn-sm">🗑️ Видалити</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">Немає транзакцій.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a href="{% url 'transaction_create' %}" class="btn btn-success">➕ Додати транзакцію</a>
+</div>
+{% endblock %}

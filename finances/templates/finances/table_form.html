@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{% if form.instance.pk %}Редагувати таблицю{% else %}Створити таблицю{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Зберегти</button>
+    </form>
+    <a href="{% url 'table_list' %}">Назад до списку</a>
+{% endblock %}

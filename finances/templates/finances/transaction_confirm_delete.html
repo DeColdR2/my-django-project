@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Видалення транзакції</h2>
+<p>Ви впевнені, що хочете видалити транзакцію {{ transaction.amount }} {{ transaction.currency }} від {{ transaction.date }}?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Так, видалити</button>
+</form>
+
+<a href="{% url 'transaction_list' %}">Скасувати</a>
+{% endblock %}

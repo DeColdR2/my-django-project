@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{% if form.instance.pk %}Редагувати транзакцію{% else %}Додати транзакцію{% endif %}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <label for="id_amount">Сума:</label>
+    {{ form.amount }}
+
+    <label for="id_currency">Валюта:</label>
+    {{ form.currency }}
+
+    <label for="id_date">Дата:</label>
+    {{ form.date }}
+
+    <label for="id_table">Таблиця:</label>
+    {{ form.table }}
+
+    <label for="id_categories">Категорії:</label>
+    {{ form.categories }}
+
+    <button type="submit">Зберегти</button>
+</form>
+
+<a href="{% url 'transaction_list' %}">Повернутися до списку</a>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📂 Мої таблиці</h2>
+    <a href="{% url 'table_create' %}" class="btn btn-success mb-3">➕ Додати таблицю</a>
+
+    <div class="list-group">
+        {% for table in tables %}
+            <a href="{% url 'table_detail' table.id %}" class="list-group-item list-group-item-action">
+                <strong>{{ table.name }}</strong>
+            </a>
+        {% empty %}
+            <p class="text-muted">У вас поки що немає таблиць.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

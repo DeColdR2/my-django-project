@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Головна сторінка{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="mt-4">Ласкаво просимо на наш сайт!</h1>
+    {% if user.is_authenticated %}
+        <p>Вітаємо, {{ user.email }}!</p>
+        <a class="btn btn-danger" href="{% url 'logout' %}">Вийти</a>
+    {% else %}
+        <p>Ви не увійшли в систему.</p>
+        <a class="btn btn-primary" href="{% url 'login' %}">Увійти</a>
+        <a class="btn btn-success" href="{% url 'register' %}">Зареєструватися</a>
+    {% endif %}
+</div>
+{% endblock %}

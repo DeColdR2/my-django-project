@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📌 {{ table.name }}</h2>
+    
+    <a href="{% url 'table_update' table.id %}" class="btn btn-warning">✏️ Редагувати</a>
+    <a href="{% url 'table_delete' table.id %}" class="btn btn-danger">🗑️ Видалити</a>
+
+    <hr>
+
+    <h3>📊 Транзакції</h3>
+
+    {% if transactions %}
+        <ul class="list-group">
+            {% for transaction in transactions %}
+                <li class="list-group-item">
+                    <strong>{{ transaction.amount }} {{ transaction.currency }}</strong>
+                    ({{ transaction.date }})
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">У цій таблиці ще немає транзакцій.</p>
+    {% endif %}
+
+    <a href="{% url 'transaction_create' %}" class="btn btn-success mt-3">➕ Додати транзакцію</a>
+</div>
+{% endblock %}
