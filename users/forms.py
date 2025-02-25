@@ -13,3 +13,13 @@ class UserRegisterForm(UserCreationForm):
 class UserLoginForm(AuthenticationForm):
     """Форма логіну"""
     username = forms.EmailField(label="Email", required=True)
+
+class CustomLoginForm(AuthenticationForm):
+    username = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+        error_messages={'invalid': 'Введіть коректний email.'}
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Пароль'}),
+        error_messages={'required': 'Пароль не може бути порожнім.'}
+    )

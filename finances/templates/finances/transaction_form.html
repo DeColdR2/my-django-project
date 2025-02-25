@@ -1,27 +1,59 @@
 {% extends "base.html" %}
+{% load custom_filters %} 
 
 {% block content %}
-<h2>{% if form.instance.pk %}Редагувати транзакцію{% else %}Додати транзакцію{% endif %}</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">
+        {% if form.instance.pk %}
+            Редагувати транзакцію
+        {% else %}
+            Додати транзакцію
+        {% endif %}
+    </h2>
 
-<form method="POST">
-    {% csrf_token %}
-    <label for="id_amount">Сума:</label>
-    {{ form.amount }}
+    <form method="POST" class="form-group">
+        {% csrf_token %}
+        
+        <!-- Сума -->
+        <div class="mb-3">
+            <label for="id_amount" class="form-label">Сума:</label>
+            {{ form.amount|add_class:"form-control" }}
+        </div>
 
-    <label for="id_currency">Валюта:</label>
-    {{ form.currency }}
+        <!-- Валюта -->
+        <div class="mb-3">
+            <label for="id_currency" class="form-label">Валюта:</label>
+            {{ form.currency|add_class:"form-control" }}
+        </div>
 
-    <label for="id_date">Дата:</label>
-    {{ form.date }}
+        <!-- Дата -->
+        <div class="mb-3">
+            <label for="id_date" class="form-label">Дата:</label>
+            
+        </div>
 
-    <label for="id_table">Таблиця:</label>
-    {{ form.table }}
+        <!-- Категорії -->
+        <div class="mb-3">
+            <label for="id_categories" class="form-label">Категорії:</label>
+            {{ form.categories|add_class:"form-control" }}
+        </div>
 
-    <label for="id_categories">Категорії:</label>
-    {{ form.categories }}
+        <div class="mb-3">
+            <label for="id_table">Таблиця:</label>
+            {{ form.table|add_class:"form-control" }}
+        </div>
 
-    <button type="submit">Зберегти</button>
-</form>
+        <!-- Кнопки -->
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Зберегти</button>
+            
+        </div>
+        
+       
+    </form>
 
-<a href="{% url 'transaction_list' %}">Повернутися до списку</a>
+    <div class="text-center mt-3">
+        <a href="{% url 'transaction_list' %}" class="btn btn-success">До списку транзакцій</a>
+    </div>
+</div>
 {% endblock %}

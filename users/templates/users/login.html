@@ -18,4 +18,36 @@
         </p>
     </div>
 </div>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="form-group">
+        <label for="{{ form.email.id_for_label }}">Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+            <div class="error-text">
+                {% for error in form.email.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.password.id_for_label }}">Пароль</label>
+        {{ form.password }}
+        {% if form.password.errors %}
+            <div class="error-text">
+                {% for error in form.password.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Увійти</button>
+</form>
+
 {% endblock %}
+

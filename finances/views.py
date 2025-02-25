@@ -13,7 +13,9 @@ from .serializers import TransactionSerializer
 from .utils import get_exchange_rates
 import logging
 from decimal import Decimal
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from .forms import CategoryForm
+
 
 logger = logging.getLogger(__name__)
 
@@ -51,8 +53,6 @@ class TableDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-
-
 def table_detail(request, table_id):
     table = get_object_or_404(Table, id=table_id, user=request.user)  # Отримуємо конкретну таблицю
     transactions = table.transactions.all()  # Отримуємо всі транзакції цієї таблиці
@@ -83,7 +83,18 @@ class TableDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'finances/table_confirm_delete.html'
     success_url = reverse_lazy('table_list')
     
+def add_category(request):
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.user = request.user  # Призначаємо категорію поточному користувачу
+            category.save()
+            return redirect('some_view')  # Перенаправлення після успішного додавання
+    else:
+        form = CategoryForm(user=request.user)
 
+    return render(request, 'finances/add_category.html', {'form': form})
 
 class TransactionListView(LoginRequiredMixin, ListView):
     model = Transaction
@@ -178,8 +189,27 @@ class TransactionCreateView(LoginRequiredMixin, CreateView):
     model = Transaction
     form_class = TransactionForm
     template_name = 'finances/transaction_form.html'
-    success_url = reverse_lazy('transaction_list')
 
+    def get_success_url(self):
+        return reverse_lazy('transaction_list')  
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tables'] = Table.objects.filter(user=self.request.user)
+        return context
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user 
+        return super().form_valid(form)
+    
+    def get_form_kwargs(self):
+        """Передаємо `user` у форму, щоб відфільтрувати категорії."""
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
+    
+    
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     model = Transaction
     form_class = TransactionForm
@@ -204,3 +234,4 @@ class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Transaction.objects.filter(table__user=self.request.user)
+    

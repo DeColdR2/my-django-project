@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Table, Transaction
+from .models import Table, Transaction, Category
 
+admin.site.register(Category)
 
 @admin.register(Table)
 class TableAdmin(admin.ModelAdmin):
@@ -15,3 +16,5 @@ class TransactionAdmin(admin.ModelAdmin):
     search_fields = ("name", "table__name")
     list_filter = ("currency", "date")
     ordering = ("-date",)
+
+

@@ -7,6 +7,7 @@ from .views import (
     TableListView, TableDetailView, TableCreateView, TableUpdateView, TableDeleteView,
     TransactionListView, TransactionCreateView, TransactionUpdateView, TransactionDeleteView
 )
+from .views import add_category
 
 urlpatterns = [
     path('tables/', TableListView.as_view(), name='table_list'),
@@ -19,12 +20,18 @@ urlpatterns = [
     
     
     path('transactions/', TransactionListView.as_view(), name='transaction_list'),
-    path('transactions/add/', TransactionCreateView.as_view(), name='transaction_create'),
+    path('transactions/add/', views.TransactionCreateView.as_view(), name='transaction_create'),
+    path('transactions/add/<int:table_id>/', TransactionCreateView.as_view(), name='transaction_add'),
     path('transactions/<int:pk>/edit/', TransactionUpdateView.as_view(), name='transaction_update'),
     path('transactions/<int:pk>/delete/', TransactionDeleteView.as_view(), name='transaction_delete'),
     path("transactions/", TransactionListCreateView.as_view(), name="transaction-list"),
     path("transactions/<int:pk>/", TransactionDetailView.as_view(), name="transaction-detail"),
 
+    path('add-category/', add_category, name='add_category'),
+
     ]
+
+
+
 
 

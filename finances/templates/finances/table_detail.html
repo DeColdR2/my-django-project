@@ -24,6 +24,9 @@
         <p class="text-muted">У цій таблиці ще немає транзакцій.</p>
     {% endif %}
 
-    <a href="{% url 'transaction_create' %}" class="btn btn-success mt-3">➕ Додати транзакцію</a>
+    <hr>
+
+    <a href="{% url 'transaction_list' %}" class="btn btn-success">До списку транзакцій</a>
+    
 </div>
 {% endblock %}

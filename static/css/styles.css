@@ -17,4 +17,16 @@ a {
 
 a:hover {
     text-decoration: underline;
+    color: #0056b3;
+}
+.text-danger {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+}
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    gap: 15px;
 }
