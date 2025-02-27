@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Transaction, Table, Category
+
+from .models import Category, Table, Transaction
+
 
 class TableSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,10 +9,6 @@ class TableSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('user',)
 
-class TransactionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Transaction
-        fields = '__all__'
 
 class TransactionSerializer(serializers.ModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all())

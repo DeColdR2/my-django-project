@@ -1,7 +1,9 @@
 import requests
+
 from django.conf import settings
 
 API_URL = "https://openexchangerates.org/api/latest.json"
+
 
 def get_exchange_rates():
     """Отримує актуальні курси валют від Open Exchange Rates."""

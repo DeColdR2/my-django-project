@@ -1,6 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+
 from .models import User
+
 
 class UserRegisterForm(UserCreationForm):
     """Форма реєстрації"""
@@ -10,9 +12,11 @@ class UserRegisterForm(UserCreationForm):
         model = User
         fields = ("email", "password1", "password2")
 
+
 class UserLoginForm(AuthenticationForm):
     """Форма логіну"""
     username = forms.EmailField(label="Email", required=True)
+
 
 class CustomLoginForm(AuthenticationForm):
     username = forms.EmailField(

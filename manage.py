@@ -2,6 +2,7 @@
 import os
 import sys
 
+
 def main():
     """Основна функція запуску Django."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'my_django_project.settings')
@@ -13,6 +14,7 @@ def main():
             "і що віртуальне середовище активовано."
         ) from exc
     execute_from_command_line(sys.argv)
+
 
 if __name__ == '__main__':
     main()

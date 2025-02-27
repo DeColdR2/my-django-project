@@ -1,23 +1,22 @@
-from django.urls import reverse_lazy
-from django.db.models import Q
-from django.shortcuts import get_object_or_404
-from django.utils.dateparse import parse_date
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Table, Transaction
-from .forms import TableForm, TransactionForm  
-from django.shortcuts import render
-from .services import convert_currency
-from rest_framework import generics, permissions
-from .serializers import TransactionSerializer
-from .utils import get_exchange_rates
 import logging
 from decimal import Decimal
-from django.shortcuts import render, redirect
-from .forms import CategoryForm
 
+from rest_framework import generics, permissions
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.utils.dateparse import parse_date
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+
+from .forms import CategoryForm, TableForm, TransactionForm
+from .models import Table, Transaction
+from .serializers import TransactionSerializer
+from .utils import get_exchange_rates
 
 logger = logging.getLogger(__name__)
+
 
 class TableListView(LoginRequiredMixin, ListView):
     model = Table
@@ -26,6 +25,7 @@ class TableListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Table.objects.filter(user=self.request.user)
+
 
 class TableDetailView(LoginRequiredMixin, DetailView):
     model = Table
@@ -40,15 +40,13 @@ class TableDetailView(LoginRequiredMixin, DetailView):
         # Отримуємо всі транзакції для цієї таблиці
         transactions = self.object.transactions.all()
 
-         # Фільтрація по сумі
+        # Фільтрація по сумі
         min_amount = self.request.GET.get("min_amount")
         max_amount = self.request.GET.get("max_amount")
         if min_amount:
             transactions = transactions.filter(amount__gte=min_amount)
         if max_amount:
             transactions = transactions.filter(amount__lte=max_amount)
-
-       
         context["transactions"] = transactions
         return context
 
@@ -62,6 +60,7 @@ def table_detail(request, table_id):
         "transactions": transactions
     })
 
+
 class TableCreateView(LoginRequiredMixin, CreateView):
     model = Table
     form_class = TableForm
@@ -72,17 +71,20 @@ class TableCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-class TableUpdateView(LoginRequiredMixin, UpdateView):  
+
+class TableUpdateView(LoginRequiredMixin, UpdateView):
     model = Table
     form_class = TableForm
     template_name = 'finances/table_form.html'
     success_url = reverse_lazy('table_list')
 
-class TableDeleteView(LoginRequiredMixin, DeleteView):  
+
+class TableDeleteView(LoginRequiredMixin, DeleteView):
     model = Table
     template_name = 'finances/table_confirm_delete.html'
     success_url = reverse_lazy('table_list')
-    
+
+
 def add_category(request):
     if request.method == "POST":
         form = CategoryForm(request.POST)
@@ -95,6 +97,7 @@ def add_category(request):
         form = CategoryForm(user=request.user)
 
     return render(request, 'finances/add_category.html', {'form': form})
+
 
 class TransactionListView(LoginRequiredMixin, ListView):
     model = Transaction
@@ -112,8 +115,9 @@ class TransactionListView(LoginRequiredMixin, ListView):
         start_date = self.request.GET.get("start_date")
         end_date = self.request.GET.get("end_date")
 
-        logger.debug(f"Фільтр: search={search_query}, min={min_amount}, max={max_amount}, start={start_date}, end={end_date}")
-
+        logger.debug(
+            f"Фільтр: search={search_query}, min={min_amount}, max={max_amount}, start={start_date}, end={end_date}"
+        )
         # Фільтр по назві таблиці
         if search_query:
             queryset = queryset.filter(Q(table__name__icontains=search_query))
@@ -178,12 +182,12 @@ class TransactionListView(LoginRequiredMixin, ListView):
 
         context["total_amounts"] = total_amounts
         context["total_uah"] = total_uah
-        context["exchange_rates"] = exchange_rates  
+        context["exchange_rates"] = exchange_rates
 
         logger.debug(f"📊 Загальні суми: {total_amounts}, Загальна сума в UAH: {total_uah}")
 
         return context
-    
+
 
 class TransactionCreateView(LoginRequiredMixin, CreateView):
     model = Transaction
@@ -191,7 +195,7 @@ class TransactionCreateView(LoginRequiredMixin, CreateView):
     template_name = 'finances/transaction_form.html'
 
     def get_success_url(self):
-        return reverse_lazy('transaction_list')  
+        return reverse_lazy('transaction_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -199,27 +203,28 @@ class TransactionCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        form.instance.user = self.request.user 
+        form.instance.user = self.request.user
         return super().form_valid(form)
-    
+
     def get_form_kwargs(self):
         """Передаємо `user` у форму, щоб відфільтрувати категорії."""
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
-    
-    
-    
+
+
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     model = Transaction
     form_class = TransactionForm
     template_name = 'finances/transaction_form.html'
     success_url = reverse_lazy('transaction_list')
 
+
 class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     model = Transaction
     template_name = 'finances/transaction_confirm_delete.html'
     success_url = reverse_lazy('transaction_list')
+
 
 class TransactionListCreateView(generics.ListCreateAPIView):
     serializer_class = TransactionSerializer
@@ -228,10 +233,10 @@ class TransactionListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         return Transaction.objects.filter(table__user=self.request.user).prefetch_related("categories")
 
+
 class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TransactionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return Transaction.objects.filter(table__user=self.request.user)
-    

@@ -1,13 +1,21 @@
 from django.urls import path
-from .views import TableListView
-from .views import TransactionListView
+
 from . import views
-from .views import TransactionListCreateView, TransactionDetailView, table_detail
 from .views import (
-    TableListView, TableDetailView, TableCreateView, TableUpdateView, TableDeleteView,
-    TransactionListView, TransactionCreateView, TransactionUpdateView, TransactionDeleteView
+    TableCreateView,
+    TableDeleteView,
+    TableDetailView,
+    TableListView,
+    TableUpdateView,
+    TransactionCreateView,
+    TransactionDeleteView,
+    TransactionDetailView,
+    TransactionListCreateView,
+    TransactionListView,
+    TransactionUpdateView,
+    add_category,
+    table_detail,
 )
-from .views import add_category
 
 urlpatterns = [
     path('tables/', TableListView.as_view(), name='table_list'),
@@ -17,8 +25,6 @@ urlpatterns = [
     path('tables/<int:pk>/delete/', TableDeleteView.as_view(), name='table_delete'),
     path('new/', TransactionCreateView.as_view(), name='transaction_create'),
     path("tables/<int:table_id>/", table_detail, name="table_detail"),
-    
-    
     path('transactions/', TransactionListView.as_view(), name='transaction_list'),
     path('transactions/add/', views.TransactionCreateView.as_view(), name='transaction_create'),
     path('transactions/add/<int:table_id>/', TransactionCreateView.as_view(), name='transaction_add'),
@@ -26,12 +32,5 @@ urlpatterns = [
     path('transactions/<int:pk>/delete/', TransactionDeleteView.as_view(), name='transaction_delete'),
     path("transactions/", TransactionListCreateView.as_view(), name="transaction-list"),
     path("transactions/<int:pk>/", TransactionDetailView.as_view(), name="transaction-detail"),
-
     path('add-category/', add_category, name='add_category'),
-
     ]
-
-
-
-
-
